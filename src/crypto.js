@@ -1,7 +1,6 @@
-const crypto = require('crypto')
+const crypto = require('src/crypto')
 
-const aes = require('aes-js')
-
+const BigInteger = require('bigi')
 
 const BLOCK_SIZE = 16
 const KEY_LENGTH = 32
@@ -35,23 +34,32 @@ function generateIV(length=BLOCK_SIZE) {
 function encrypt(password, data, salt) {
   let key = _deriveKey(salt, password)
   let iv = generateIV()
-  let aesCbc = new aes.ModeOfOperation.cbc(key, iv)
-  let dataAsBytes = aes.utils.utf8.toBytes(pad(data))
-  let encryptedBytes = aesCbc.encrypt(dataAsBytes)
+  let aes = crypto.createCipheriv('aes-256-cbc', key, iv)
+  let encrypted = aes.update(pad(data), 'utf8', 'hex')
+  encrypted += aes.final('hex')
   return {
-    iv: aes.utils.hex.fromBytes(iv),
-    data: aes.utils.hex.fromBytes(encryptedBytes)
+    iv: iv.toString('hex'),
+    data: encrypted,
   }
 }
 
 
 function decrypt(password, data, salt, iv) {
   let key = _deriveKey(salt, password)
-  let ivAsBytes = typeof iv == 'string' ? aes.utils.utf8.fromBytes(iv) : iv
-  let aesCbc = new aes.ModeOfOperation.cbc(key, ivAsBytes)
-  let dataAsBytes = aes.utils.hex.toBytes(data)
-  let decryptedBytes = aesCbc.decrypt(dataAsBytes)
-  return unpad(aes.utils.utf8.fromBytes(decryptedBytes))
+  let ivAsBytes = typeof iv == 'string' ? Buffer.from(iv, 'hex') : iv
+  let aes = crypto.createDecipheriv('aes-256-cbc', key, ivAsBytes)
+  let decrypted = aes.update(data, 'hex', 'utf8')
+  decrypted += aes.final('utf8')
+  return unpad(decrypted)
+}
+
+
+
+function sign(sighash, privKey) {
+  let buffer = new Buffer(privKey, 'hex')
+  let d = BigInteger.fromBuffer(buffer)
+  let keyPair = new btc.ECPair(d, true)
+  return keyPair.sign(new Buffer(sighash, 'hex')).toDER().toString('hex')
 }
 
 
@@ -61,3 +69,4 @@ function _deriveKey(salt, password, iterations=ITERATIONS, keyLen=KEY_LENGTH) {
 
 exports.encrypt = encrypt
 exports.decrypt = decrypt
+exports.sign = sign

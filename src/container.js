@@ -4,12 +4,21 @@ const uuid = require('uuid/v4')
 const crypto = require('./crypto')
 
 
-class Container {
+Container = class {
   constructor(pubKey, data, iv, salt) {
     this.publicKey = pubKey
     this.data = data
     this.iv = iv
     this.salt = salt
+  }
+
+  getAddress() {
+    let pubKeyHash = btc.crypto.hash160(new Buffer(this.publicKey, 'hex'))
+    return btc.address.toBase58Check(pubKeyHash, btc.networks.bitcoin.pubKeyHash)
+  }
+
+  getPrivKey(secret) {
+    return crypto.decrypt(secret, this.data, this.salt, this.iv)
   }
 
   asRequest() {
@@ -23,6 +32,11 @@ class Container {
   }
 }
 
+Container.fromObject = obj => {
+  return new Container(obj.public_key, obj.data, obj.iv, obj.salt)
+}
+
+
 function generateKeyPair() {
   let keyPair = btc.ECPair.makeRandom()
   return {
@@ -32,11 +46,13 @@ function generateKeyPair() {
   }
 }
 
+
 function generate(secret) {
   let {pubKey, privKey} = generateKeyPair()
   let {encryptedPrivKey, iv, salt} = _encrypt(privKey, secret)
   return new Container(pubKey, encryptedPrivKey, iv, salt)
 }
+
 
 function _encrypt(data, secret) {
   let salt = uuid()
@@ -46,8 +62,8 @@ function _encrypt(data, secret) {
     iv,
     salt
   }
-
 }
+
 
 module.exports.Container = Container
 module.exports.generateKeyPair = generateKeyPair
