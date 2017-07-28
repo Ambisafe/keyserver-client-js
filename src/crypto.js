@@ -54,18 +54,19 @@ function decrypt(password, data, salt, iv) {
 }
 
 
-
 function sign(sighash, privKey) {
-  let buffer = new Buffer(privKey, 'hex')
+  let buffer = typeof privKey == 'string' ? new Buffer(privKey, 'hex') : privKey
+  let sighashBuf = typeof sighash == 'string' ? new Buffer(sighash, 'hex') : sighash
   let d = BigInteger.fromBuffer(buffer)
   let keyPair = new btc.ECPair(d, true)
-  return keyPair.sign(new Buffer(sighash, 'hex')).toDER().toString('hex')
+  return keyPair.sign(sighashBuf).toDER().toString('hex')
 }
 
 
 function _deriveKey(salt, password, iterations=ITERATIONS, keyLen=KEY_LENGTH) {
   return crypto.pbkdf2Sync(password, salt, iterations, keyLen, 'sha512')
 }
+
 
 exports.encrypt = encrypt
 exports.decrypt = decrypt

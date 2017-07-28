@@ -12,7 +12,6 @@ class BaseTransaction {
 }
 
 
-
 class UserSideTransaction extends BaseTransaction {
   constructor(hex, fee, sighashes, userSignatures) {
     super(hex, fee, sighashes)

@@ -1,5 +1,6 @@
 const Container = require('./container').Container
 
+
 const Account = class {
   constructor(id, externalId, schema, address, container) {
     this.id = id
