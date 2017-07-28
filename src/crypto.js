@@ -57,9 +57,7 @@ function decrypt(password, data, salt, iv) {
 
 function sign(sighash, privKey) {
   let sighashBuf = typeof sighash == 'string' ? new Buffer(sighash, 'hex') : sighash
-  let d = BigInteger.fromBuffer(buffer)
   let keyPair = btc.ECPair.fromWIF(privKey)
-  // let keyPair = new btc.ECPair(d, true)
   return keyPair.sign(sighashBuf).toDER().toString('hex')
 }
 
