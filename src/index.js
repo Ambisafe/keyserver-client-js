@@ -1,4 +1,4 @@
-const crypto = require('src/crypto')
+const crypto = require('./crypto')
 
 const axios = require('axios')
 
