@@ -22,7 +22,7 @@ client.createUserSideKeyAccount(accountId, cont)  // store container
 .then(() => client.getAccount(accountId))  // get account from server
 .then(account => {
   let amountInBtc = 0.1
-  client.buildTransaction(accountId, '', amountInBtc)  // build tx
+  client.buildTransaction(accountId, '14xEPWuHC3ybPMfv8iTZZ29UCLTUSoJ8HL', amountInBtc)  // build tx
   .then(tx => account.signTransaction('secret', tx))  // sign tx
   .then(tx => client.submit(accountId, tx)) // submit signed tx
   .then(console.log)
