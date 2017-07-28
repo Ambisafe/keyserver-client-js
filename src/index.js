@@ -1,9 +1,10 @@
-const crypto = require('./crypto')
+const crypto = require('crypto')
 
 const axios = require('axios')
 
 const Account = require('./account').Account
 const container = require('./container')
+const {BaseTransaction} = require('./transactions')
 const {Container} = container
 
 
@@ -72,6 +73,7 @@ class Client {
     }
     let externalId = this._getPrefixedAccount(accountId)
     return this._makeRequest('POST', `/transactions/build/${externalId}/${currency}`, JSON.stringify(body))
+      .then(res => new BaseTransaction(res.data.hex, res.data.fee, res.data.sighashes))
   }
 
   _makeRequest(method, uri, data=null) {

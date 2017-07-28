@@ -1,5 +1,6 @@
 const crypto = require('crypto')
 
+const btc = require('bitcoinjs-lib')
 const BigInteger = require('bigi')
 
 const BLOCK_SIZE = 16
@@ -55,10 +56,10 @@ function decrypt(password, data, salt, iv) {
 
 
 function sign(sighash, privKey) {
-  let buffer = typeof privKey == 'string' ? new Buffer(privKey, 'hex') : privKey
   let sighashBuf = typeof sighash == 'string' ? new Buffer(sighash, 'hex') : sighash
   let d = BigInteger.fromBuffer(buffer)
-  let keyPair = new btc.ECPair(d, true)
+  let keyPair = btc.ECPair.fromWIF(privKey)
+  // let keyPair = new btc.ECPair(d, true)
   return keyPair.sign(sighashBuf).toDER().toString('hex')
 }
 

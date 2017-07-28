@@ -1,5 +1,8 @@
 const Container = require('./container').Container
 
+const crypto = require('./crypto')
+const {UserSideTransaction} = require('./transactions')
+
 
 const Account = class {
   constructor(id, externalId, schema, address, container) {
@@ -8,6 +11,13 @@ const Account = class {
     this.schema = schema
     this.address = address
     this.container = container
+  }
+
+  signTransaction(secret, tx) {
+    let privKey = this.container.getPrivKey(secret)
+    let userSignatures = tx.sighashes.map(sighash => crypto.sign(sighash, privKey))
+    let {hex, fee, sighashes} = tx.toJSON()
+    return new UserSideTransaction(hex, fee, sighashes, userSignatures)
   }
 }
 
