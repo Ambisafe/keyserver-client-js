@@ -148,4 +148,8 @@ class Client {
 }
 
 
-module.exports = Client
+module.exports.Client = Client
+module.exports.account = require('./account')
+module.exports.container = require('./container')
+module.exports.crypto = require('./crypto')
+module.exports.transactions = require('./transactions')
