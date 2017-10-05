@@ -76,6 +76,19 @@ class Client {
       .then(res => new BaseTransaction(res.data.hex, res.data.fee, res.data.sighashes))
   }
 
+  buildMassTransaction(accountId, destination, amount, options, currency='BTC') {
+    const body = {
+      destination,
+      amount,
+      options,
+    };
+
+    const externalId = this._getPrefixedAccount(accountId);
+
+    return this._makeRequest('POST', `/transactions/build/${externalId}/${currency}`, JSON.stringify(body))
+      .then(res => new BaseTransaction(res.data.hex, res.data.fee, res.data.sighashes))
+  }
+
   _makeRequest(method, uri, data=null) {
     let json
     if (data == null) {
