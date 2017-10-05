@@ -76,7 +76,26 @@ class Client {
       .then(res => new BaseTransaction(res.data.hex, res.data.fee, res.data.sighashes))
   }
 
-  buildMassTransaction(accountId, destination, amount, options, currency='BTC') {
+  buildMassTransaction(accountId, recipients, feePerKb = '', currency = 'BTC') {
+    const temp = {...recipients};
+    const addresses = Object.keys(temp);
+
+    if (addresses.length === 0) {
+      throw new Error(`Recipients: empty object`);
+    }
+
+    const destination = addresses[0];
+    const amount = temp[addresses[0]];
+    delete temp[addresses[0]];
+
+    const options = {
+      outputs: temp
+    };
+
+    if (feePerKb) {
+      options.feePerKb = feePerKb;
+    }
+
     const body = {
       destination,
       amount,
