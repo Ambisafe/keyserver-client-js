@@ -77,7 +77,7 @@ class Client {
   }
 
   buildMassTransaction(accountId, recipients, feePerKb = '', currency = 'BTC') {
-    const temp = {...recipients};
+    const temp = Object.assign({}, recipients);
     const addresses = Object.keys(temp);
 
     if (addresses.length === 0) {
