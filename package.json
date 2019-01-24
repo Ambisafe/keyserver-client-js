@@ -1,6 +1,6 @@
 {
-  "name": "keyserver-client",
-  "version": "0.1.2",
+  "name": "@orderbook/keyserver-client",
+  "version": "1.0.0",
   "description": "Ambisafe KeyServer JS client",
   "main": "src/index.js",
   "scripts": {

@@ -1,0 +1,6 @@
+tests
+.editorconfig
+.eslintignore
+.eslintrc.json
+.gitignore
+.gitlab-ci.yml

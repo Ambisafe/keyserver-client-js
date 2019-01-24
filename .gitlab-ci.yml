@@ -1,0 +1,14 @@
+stages:
+  - publish
+
+publish:
+  stage: publish
+  image: node:8.9.1
+  before_script:
+    - echo "//registry.npmjs.org/:_authToken=${NPM_REGISTRY_AUTH_TOKEN}" | tee .npmrc
+  script:
+    - npm publish
+  only:
+    - master
+  tags:
+    - single
